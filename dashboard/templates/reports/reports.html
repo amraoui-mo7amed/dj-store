@@ -1,0 +1,187 @@
+{% extends "dash/dash_index.html" %}
+{% load static tags %}
+
+{% block dashTitle %}
+    <span>تقارير المتجر الشاملة</span>
+{% endblock dashTitle %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static "css/sales.css" %}?v={% now "U" %}" />
+    <link rel="stylesheet" href="{% static "css/reports.css" %}?v={% now "U" %}" />
+{% endblock extra_css %}
+
+{% block dashContent %}
+<div class="reports-container container-fluid pb-5">
+    
+    <!-- Primary KPI Section -->
+    <div class="row g-4 mb-5" id="stats">
+        <div class="col-xl-3 col-md-6">
+            <div class="card card-revenue h-100">
+                <i class="fas fa-coins"></i>
+                <div class="d-flex flex-column">
+                    <p>{{ sales.total_revenue|humanize_number }} دج</p>
+                    <h6>إجمالي الإيرادات</h6>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card card-items h-100">
+                <i class="fas fa-shopping-basket"></i>
+                <div class="d-flex flex-column">
+                    <p>{{ sales.total_items_sold }}</p>
+                    <h6>إجمالي القطع المباعة</h6>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card card-count h-100">
+                <i class="fas fa-file-invoice"></i>
+                <div class="d-flex flex-column">
+                    <p>{{ sales.total_sales_count }}</p>
+                    <h6>عدد الطلبيات الناجحة</h6>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card card-confirmed h-100">
+                <i class="fas fa-clock"></i>
+                <div class="d-flex flex-column">
+                    <p>{{ sales.pending_orders_count }}</p>
+                    <h6>طلبات بانتظار التأكيد</h6>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row g-4 mb-5">
+        <div class="col-lg-8">
+            <div class="chart-card shadow-sm h-100">
+                <div class="chart-header">
+                    <h5>نمو الإيرادات (آخر 6 أشهر)</h5>
+                    <div class="badge badge-soft-success">تحديث مباشر</div>
+                </div>
+                <div class="card-body">
+                    <canvas id="revenueChart" class="chart-canvas-revenue"
+                            data-labels="{{ sales.monthly_labels|safe }}"
+                            data-values="{{ sales.monthly_revenue|safe }}"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="chart-card shadow-sm h-100">
+                <div class="chart-header">
+                    <h5>توزيع الحالات</h5>
+                </div>
+                <div class="card-body d-flex flex-column justify-content-center">
+                    <canvas id="statusDoughnut" class="chart-canvas-doughnut"
+                            data-labels="{{ sales.status_labels|safe }}"
+                            data-values="{{ sales.status_values|safe }}"></canvas>
+                    <div class="mt-4">
+                        {% for s in sales.by_status %}
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="small text-muted">{{ status_choices|get_item:s.status }}</span>
+                            <span class="fw-bold small">{{ s.count }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Secondary Data Row -->
+    <div class="row g-4">
+        <!-- Top Regions -->
+        <div class="col-lg-4">
+            <div class="chart-card h-100">
+                <div class="chart-header">
+                    <h5>أعلى الولايات طلباً</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-custom text-center">
+                            <thead>
+                                <tr>
+                                    <th>الولاية</th>
+                                    <th>عدد الطلبات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for w in sales.by_wilaya %}
+                                <tr>
+                                    <td class="fw-bold text-primary">{{ w.wilaya }}</td>
+                                    <td><span class="badge badge-soft-info">{{ w.count }} طلب</span></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Inventory Status -->
+        <div class="col-lg-8">
+            <div class="chart-card h-100">
+                <div class="chart-header">
+                    <h5>توزيع المخزون والتنبيهات</h5>
+                    <span class="badge badge-soft-warning">{{ stock.low_stock_count }} منتج منخفض المخزون</span>
+                </div>
+                <div class="card-body">
+                    <div class="row g-4">
+                        <div class="col-md-6 border-end">
+                            <div class="table-responsive">
+                                <table class="table table-custom table-sm text-center">
+                                    <thead>
+                                        <tr>
+                                            <th>الفئة</th>
+                                            <th>الأصناف</th>
+                                            <th>الكمية</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for c in stock.by_category %}
+                                        <tr>
+                                            <td>{{ category_choices|get_item:c.category }}</td>
+                                            <td>{{ c.item_count }}</td>
+                                            <td class="fw-bold">{{ c.total_qty }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="mb-3 small fw-bold text-muted">منتجات تحتاج إعادة طلب</h6>
+                            <div class="list-group list-group-flush">
+                                {% for item in stock.low_stock_items %}
+                                <div class="list-group-item px-0 border-0 mb-2">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <span class="small fw-bold">{{ item.product_name }}</span>
+                                        <span class="text-danger small fw-bold">{{ item.quantity }} قطعة</span>
+                                    </div>
+                                    <div class="progress progress-thin">
+                                        <div class="progress-bar bg-danger" style="width: {{ item.quantity }}0%"></div>
+                                    </div>
+                                </div>
+                                {% empty %}
+                                <div class="text-center py-4">
+                                    <i class="fas fa-check-circle text-success fs-2 mb-2"></i>
+                                    <p class="text-muted small">المخزون في حالة ممتازة</p>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock dashContent %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static "js/reports.js" %}?v={% now "U" %}"></script>
+{% endblock extra_js %}

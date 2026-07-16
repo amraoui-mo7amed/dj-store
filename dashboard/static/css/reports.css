@@ -1,0 +1,13 @@
+/* ── Reports page specific overrides ── */
+#stats .card {
+  min-height: auto;
+  margin-bottom: 0;
+}
+
+.chart-canvas-revenue {
+  min-height: 350px;
+}
+
+.chart-canvas-doughnut {
+  max-height: 250px;
+}

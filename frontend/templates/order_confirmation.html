@@ -1,0 +1,55 @@
+{% extends "index.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm text-center">
+                <div class="card-body p-5">
+                    <div class="mb-4">
+                        <i class="fas fa-check-circle text-success" style="font-size: 4rem;"></i>
+                    </div>
+                    <h2 class="mb-3">تم إرسال طلبك بنجاح!</h2>
+                    <p class="text-muted mb-4">شكراً لثقتك بنا، سيتصل بك فريقنا لتأكيد الطلب خلال دقائق.</p>
+                    
+                    <div class="bg-light rounded-3 p-4 mb-4 text-start">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">رقم الطلب</span>
+                            <strong dir="ltr">{{ order.ref_code }}</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">المنتج</span>
+                            <strong>{{ order.product.product_name }}</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">الكمية</span>
+                            <strong>{{ order.quantity }}</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">الإجمالي</span>
+                            <strong>{{ order.product.price }} دج</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">الولاية</span>
+                            <strong>{{ order.get_wilaya_name }}</strong>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="text-muted">البلدية</span>
+                            <strong>{{ order.commune }}</strong>
+                        </div>
+                    </div>
+
+                    <p class="small text-muted">يمكنك تتبع طلبك باستخدام رقم الطلب ورقم هاتفك</p>
+                    <a href="{% url 'frontend:order_lookup' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-search ms-1"></i> تتبع الطلب
+                    </a>
+                    <a href="{% url 'frontend:index' %}" class="btn btn-primary me-2">
+                        <i class="fas fa-home ms-1"></i> العودة للرئيسية
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

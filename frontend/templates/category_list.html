@@ -1,0 +1,84 @@
+{% extends 'index.html' %}
+
+{% load static %}
+
+{% block title %}
+    - الفئات
+{% endblock title %}
+
+{% block nav %}
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="homeNav">
+        <div class="container">
+            <a class="navbar-brand" href="{% url "frontend:index" %}">
+                {{ site_name }}
+            </a>
+            <button class="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url "frontend:index" %}">الرئيسية</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url "frontend:category_list" %}">الفئات</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url "frontend:index" %}#contact">اتصل بنا</a>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+    </nav>
+{% endblock nav %}
+
+{% block content %}
+    <section class="hero mb-3">
+        <div class="container">
+            <div class="hero-content">
+                <h1>
+                    فئات المنتجات
+                </h1>
+                <p>
+                    استكشف مجموعتنا المتنوعة من الفئات لتجد ما يناسب احتياجاتك
+                </p>
+
+            </div>
+        </div>
+    </section>
+    <div class="container-fluid">
+        {% for category in categories %}
+            <div class="category-section mb-5">
+                <div class="category-title mb-3 w-100 d-flex justify-content-between align-items-center">
+                    <h2 class="category-name text-primary">
+                        {{ category.name }}
+                    </h2>
+                    <a href="{% url 'frontend:category_details' category.slug %}">
+                        <i class="fas fa-angle-left fw-bold fs-1 text-primary"></i>
+                    </a>
+                </div>
+                {% if category.items %}
+                    <div class="container-fluid">
+                        <div class="row g-4">
+                            {% for item in category.items %}
+                                {% include 'partials/productCard.html' with product=item %}
+
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="container-fluid">
+                        <div class="alert alert-danger" role="alert">
+                            لا توجد عناصر متوفرة في هذه الفئة بعد.
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+{% endblock content %}

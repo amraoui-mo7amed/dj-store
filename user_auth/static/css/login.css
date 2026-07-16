@@ -1,0 +1,137 @@
+/* Login Page Specific Styles */
+.login-container {
+    max-width: 450px;
+    margin: 80px auto;
+    padding: 30px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.login-header h2 {
+    color: var(--primary-color);
+    font-weight: 600;
+    margin-bottom: 10px;
+    font-size: 2.2rem;
+}
+
+.login-header p {
+    color: var(--text-dark);
+    font-size: 1.1rem;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(44, 90, 160, 0.25);
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    padding: 12px 30px;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #1a3a7a;
+    border-color: #1a3a7a;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.forgot-password {
+    font-size: 1rem;
+    color: var(--text-dark);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.forgot-password:hover {
+    color: var(--primary-color);
+    text-decoration: underline;
+    padding-right: 5px;
+}
+
+.signup-text {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 1rem;
+    color: var(--text-dark);
+}
+
+.signup-text a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.signup-text a:hover {
+    text-decoration: underline;
+    color: #1a3a7a;
+}
+
+.social-login {
+    margin-top: 25px;
+    text-align: center;
+}
+
+.social-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    margin: 0 8px;
+    border-radius: 50%;
+    color: white;
+    font-size: 1.3rem;
+    transition: all 0.3s ease;
+}
+
+.facebook-btn {
+    background-color: #3b5998;
+}
+
+.google-btn {
+    background-color: #db4437;
+}
+
+.social-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.password-wrapper {
+    position: relative;
+    max-width: 100%;
+}
+
+.password-wrapper .form-control {
+    padding-left: 2.5rem;
+}
+
+.toggle-password {
+    position: absolute;
+    top: 50%;
+    left: 0.75rem;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-dark);
+    transition: color 0.3s ease;
+}
+
+.toggle-password:hover,
+.toggle-password:focus {
+    color: var(--primary-color);
+    outline: none;
+}

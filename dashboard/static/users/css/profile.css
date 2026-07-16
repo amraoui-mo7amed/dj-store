@@ -1,0 +1,167 @@
+/* =============================================
+   PROFILE PAGE — Navy/Coral Brand (users/)
+   ============================================= */
+
+/* ── Cover ── */
+.profile-cover {
+  position: relative;
+  background: linear-gradient(135deg, var(--navy-950) 0%, var(--navy-800) 100%);
+  border-radius: 20px;
+  padding: 40px 40px 0;
+  margin-bottom: 0;
+  min-height: 200px;
+}
+
+.profile-cover-overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+/* ── Summary (avatar + name) ── */
+.profile-summary {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.profile-summary-avatar {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.profile-summary-avatar img,
+.avatar-placeholder {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 4px solid var(--coral-500);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+}
+
+.avatar-placeholder {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--coral-500);
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.avatar-edit-btn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--coral-500);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid #fff;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-size: 0.8rem;
+}
+
+.avatar-edit-btn:hover {
+  background: var(--navy-900);
+  transform: scale(1.1);
+}
+
+.profile-summary-info h4 {
+  color: #fff;
+  font-weight: 700;
+  margin-bottom: 4px;
+  font-size: 1.3rem;
+}
+
+.bg-coral-500 {
+  background-color: var(--coral-500) !important;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+/* ── Body (form card) ── */
+.profile-body {
+  background: #fff;
+  border-radius: 0 0 20px 20px;
+  padding: 32px;
+  margin-top: -20px;
+  box-shadow: var(--dash-shadow-sm);
+  border: 1px solid var(--dash-border);
+  border-top: none;
+}
+
+.profile-body .form-label {
+  color: var(--navy-800);
+  font-weight: 700;
+  font-size: 0.85rem;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.profile-body .form-control {
+  border-radius: 12px;
+  border: 1.5px solid var(--gray-200);
+  padding: 11px 16px;
+  font-size: 0.92rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  color: var(--gray-700);
+}
+
+.profile-body .form-control:focus {
+  border-color: var(--coral-500);
+  box-shadow: 0 0 0 3px rgba(249,115,22,0.08);
+  outline: none;
+}
+
+#id_bio {
+  resize: vertical;
+}
+
+/* ── Actions footer ── */
+.profile-actions {
+  border-top: 1px solid var(--gray-100);
+  margin-top: 28px;
+  padding-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-coral-primary {
+  background: var(--coral-500);
+  color: #fff;
+  border: none;
+  border-radius: 100px;
+  padding: 10px 32px;
+  font-weight: 700;
+  font-size: 0.875rem;
+  box-shadow: 0 2px 8px rgba(249,115,22,0.2);
+  transition: all 0.25s ease;
+  cursor: pointer;
+}
+
+.btn-coral-primary:hover {
+  background: var(--coral-400);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(249,115,22,0.3);
+}
+
+/* ── Custom select inside profile ── */
+.profile-body .custom-select-wrapper .custom-select-label {
+  color: var(--navy-800);
+  font-weight: 700;
+  font-size: 0.85rem;
+  margin-bottom: 6px;
+}

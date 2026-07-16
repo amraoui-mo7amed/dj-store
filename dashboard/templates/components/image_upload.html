@@ -1,0 +1,10 @@
+<div class="image-upload-section mb-3">
+    <label class="form-label fw-bold">{{ label|default:"الصورة" }}</label>
+    <div class="image-upload-wrapper {% if not multiple %}single-mode{% endif %}" id="{{ wrapper_id|default:'imageWrapper' }}">
+        <div class="add-image-btn" data-for="{{ input_id|default:'imageInput' }}">
+            <i class="fas fa-plus fa-2x"></i>
+            <span class="mt-1 small">إضافة صورة</span>
+        </div>
+    </div>
+    <input type="file" id="{{ input_id|default:'imageInput' }}" name="{{ input_name|default:'image' }}" {% if not multiple %}accept="image/*"{% else %}multiple accept="image/*"{% endif %} class="d-none" data-wrapper="{{ wrapper_id|default:'imageWrapper' }}" data-multiple="{{ multiple|yesno:'true,false' }}">
+</div>

@@ -1,0 +1,179 @@
+{% extends "dash/dash_index.html" %}
+
+{% load static tags %}
+
+{% block dashTitle %}
+    <span>قائمة المبيعات</span>
+{% endblock dashTitle %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/stock_list.css' %}?v={% now "U" %}" />
+    <link rel="stylesheet" href="{% static "css/sales.css" %}?v={% now "U" %}" />
+{% endblock extra_css %}
+
+{% block dashContent %}
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body p-4">
+            {% if page_obj %}
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    {% include 'components/table_search.html' with table_id='salesTable' %}
+                </div>
+
+                <div class="row g-3" id="salesTable">
+                    {% for order in page_obj %}
+                        <div class="col-12 col-md-6 col-lg-4">
+                            <div class="list-card h-100">
+                                <div class="card-header d-flex align-items-center justify-content-between">
+                                    <span class="fw-bold">#{{ order.id|stringformat:".04d" }}</span>
+                                    <span class="badge bg-light text-dark rounded-pill">{{ order.name|truncatechars:20 }}</span>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row g-2">
+                                        <div class="col-6">
+                                            <p class="list-label">العميل</p>
+                                            <p class="list-value">{{ order.name|truncatechars:20 }}</p>
+                                        </div>
+                                        <div class="col-6">
+                                            <p class="list-label">الهاتف</p>
+                                            <p class="list-value" dir="ltr">{{ order.phone|truncatechars:10 }}</p>
+                                        </div>
+                                        <div class="col-6">
+                                            <p class="list-label">الولاية</p>
+                                            <p class="list-value">{{ order.get_wilaya_name }}</p>
+                                        </div>
+                                        <div class="col-6">
+                                            <p class="list-label">البلدية</p>
+                                            <p class="list-value">{{ order.commune }}</p>
+                                        </div>
+                                        <div class="col-12">
+                                            <p class="list-label">الحالة</p>
+                                            <select class="order-status-select form-select form-select-sm" data-order-id="{{ order.id }}">
+                                                {% for status_key, status_value in order.STATUS_CHOICES %}
+                                                    <option value="{{ status_key }}" {% if order.status == status_key %}selected{% endif %}>{{ status_value }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-footer d-flex gap-1 justify-content-end">
+                                    {% url "dash:delete_sale" order.pk as delete_url %}
+                                    <button type="button"
+                                            class="btn btn-primary btn-sm rounded view-order-btn"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#orderDetailsModal"
+                                            data-order-id="{{ order.pk }}">
+                                        <i class="fas fa-eye ms-1"></i> عرض
+                                    </button>
+                                    {% include "components/action_buttons.html" with delete_url=delete_url %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                {% include "components/pagination.html" %}
+
+            {% else %}
+                <div class="d-flex flex-column align-items-center justify-content-center p-4 text-center border rounded bg-light">
+                    <i class="fas fa-exclamation-triangle display-4 text-danger mb-3"></i>
+                    <p class="mb-3 text-dark fs-5">لا توجد طلبيات بعد.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Order Details Modal -->
+    <div class="modal fade"
+         id="orderDetailsModal"
+         tabindex="-1"
+         aria-labelledby="orderDetailsModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-light text-dark">
+                    <h5 class="modal-title fw-bold" id="orderDetailsModalLabel">
+                        تفاصيل الطلبية #<span id="orderId"></span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-dark">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <div class="card-header bg-primary text-dark">
+                                    <h6 class="mb-0 fw-semibold"><i class="fas fa-user me-2"></i>معلومات العميل</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
+                                        <span class="fw-bold">الاسم:</span>
+                                        <span id="customerName" class="text-start"></span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
+                                        <span class="fw-bold">الهاتف:</span>
+                                        <span id="customerPhone" class="text-start"></span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
+                                        <span class="fw-bold">العنوان:</span>
+                                        <span id="customerAddress" class="text-start"></span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
+                                        <span class="fw-bold">الولاية:</span>
+                                        <span id="customerWilaya" class="text-start"></span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="fw-bold">البلدية:</span>
+                                        <span id="customerCommune" class="text-start"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <div class="card-header bg-success text-dark">
+                                    <h6 class="mb-0 fw-semibold"><i class="fas fa-shopping-cart me-2"></i>معلومات الطلبية</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
+                                        <span class="fw-bold">المنتج:</span>
+                                        <span id="productName" class="text-start"></span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
+                                        <span class="fw-bold">الكمية:</span>
+                                        <span id="productQuantity" class="text-start"></span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
+                                        <span class="fw-bold">السعر:</span>
+                                        <span id="productPrice" class="text-start"></span> دج
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
+                                        <span class="fw-bold">المقاس:</span>
+                                        <span id="productSize" class="text-start"></span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
+                                        <span class="fw-bold">اللون:</span>
+                                        <span id="productColor" class="text-start"></span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
+                                        <span class="fw-bold">الحالة:</span>
+                                        <span id="orderStatus" class="text-start"></span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="fw-bold">تاريخ الطلب:</span>
+                                        <span id="orderDate" class="text-start"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary rounded" data-bs-dismiss="modal">إغلاق</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock dashContent %}
+
+{% block extra_js %}
+    <script src="{% static "js/sales.js" %}?v={% now "U" %}"></script>
+{% endblock extra_js %}

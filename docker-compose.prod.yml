@@ -1,0 +1,44 @@
+services:
+  db:
+    image: postgres:16-alpine
+    volumes:
+      - postgres_data_prod:/var/lib/postgresql/data/
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_DB=${DB_NAME:-inventory_db}
+      - POSTGRES_USER=${DB_USER:-inventory_user}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-inventory_pass}
+    networks:
+      - app-network
+    restart: always
+
+  redis:
+    image: redis:7-alpine
+    networks:
+      - app-network
+    restart: always
+
+  web:
+    build: .
+    volumes:
+      - ./staticfiles:/app/staticfiles
+      - ./media:/app/media
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+    networks:
+      - app-network
+    restart: always
+
+networks:
+  app-network:
+    external: true
+    name: loftdesign_app-network
+
+volumes:
+  postgres_data_prod:

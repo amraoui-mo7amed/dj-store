@@ -1,0 +1,456 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="description"
+              content="{{ site_name }} - متجر إلكتروني جزائري. الدفع عند الاستلام، توصيل لجميع الولايات." />
+        <meta name="keywords"
+              content="متجر جزائري, تسوق, الدفع عند الاستلام, توصيل لكل الولايات, {{ site_name }}" />
+        {% if site_logo %}
+            <link rel="icon" href="{{ site_logo }}" type="image/x-icon" />
+        {% endif %}
+        <title>{{ site_name }} — {{ headline }}</title>
+
+        <link rel="stylesheet"
+              href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.rtl.min.css"
+              integrity="sha384-DOXMLfHhQkvFFp+rWTZwVlPVqdIhpDVYT9csOnHSgWQWPX0v5MCGtjCJbY6ERspU"
+              crossorigin="anonymous" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300..900&family=El+Messiri:wght@400..700&display=swap" rel="stylesheet">
+        <link rel="stylesheet"
+              href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+        <link rel="stylesheet" href="{% static "css/index.css" %}?v={% now "U" %}" />
+        <style>
+            :root {
+                --navy-950: {{ primary_dark }};
+                --navy-900: {{ primary_color }};
+                --navy-800: {{ primary_light }};
+                --coral-500: {{ accent_color }};
+                --coral-400: {{ accent_light }};
+                --coral-50: {{ accent_bg }};
+                --blue-600: {{ secondary_color }};
+                --blue-500: {{ secondary_light }};
+                --blue-50: {{ secondary_bg }};
+                --emerald-500: {{ success_color }};
+                --emerald-50: {{ success_bg }};
+                --shadow-glow: 0 0 20px rgba({{ accent_rgb }} / 0.15);
+            }
+        </style>
+        {% block css %}{% endblock css %}
+        {% block extra_css %}{% endblock extra_css %}
+    </head>
+    <body>
+
+        <!-- ═══ NAVBAR ═══ -->
+        {% block nav %}
+        <nav class="navbar-wrap">
+            <div class="container">
+                <div class="navbar-inner">
+                    <a class="brand-link" href="{% url "frontend:index" %}">
+                        {% if site_logo %}
+                            <img src="{{ site_logo }}" alt="{{ site_name }}" class="brand-logo" />
+                        {% endif %}
+                        <span class="brand-name">{{ site_name }}</span>
+                    </a>
+
+                    <button class="ham" type="button" aria-label="القائمة">
+                        <span></span><span></span><span></span>
+                    </button>
+
+                    <div class="nav-menu" id="navMenu">
+                        <ul class="nav-links">
+                            <li><a class="active" href="{% url "frontend:index" %}">الرئيسية</a></li>
+                            <li><a href="#categories">الفئات</a></li>
+                            <li><a href="#products">المنتجات</a></li>
+                            <li><a href="#about">من نحن</a></li>
+                            <li><a href="#contact">اتصل بنا</a></li>
+                        </ul>
+                        <div class="nav-actions">
+                            <a href="{% url 'frontend:order_lookup' %}" class="btn-track"><i class="fas fa-search ms-1"></i> تتبع</a>
+                            <a href="{% url "user_auth:login" %}" class="btn-signin"><i class="fas fa-user ms-1"></i> دخول</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        {% endblock nav %}
+
+        <main>
+            {% block content %}
+
+            <!-- ═══ HERO ═══ -->
+            <section class="hero">
+                <div class="hero-bg-blob"></div>
+                <div class="hero-bg-blob hb2"></div>
+                <div class="container">
+                    <div class="hero-content">
+                        <div class="hero-tag">
+                            <i class="fas fa-bolt"></i> الدفع عند الاستلام — نوصل لكل الولايات
+                        </div>
+                        <h1>
+                            {% with hl=headline|default:"تسوق بأمان" %}
+                                {{ hl|cut:"." }}<br>
+                                <span class="hl-coral"> واستلمه عند باب منزلك</span>
+                            {% endwith %}
+                        </h1>
+                        <p>
+                            تصفح أحدث المنتجات، واختر ما تريد، واستلمه عند باب منزلك. الدفع يتم عند الاستلام — لا تدفع قبل أن تتأكد من المنتج.
+                        </p>
+
+                        <form action="{% url 'frontend:product_list' %}" method="GET" class="hero-search">
+                            <div class="input-group">
+                                <input type="text" name="search" class="form-control" placeholder="ابحث عن منتج... خيمة، حقيبة، موقد..." aria-label="بحث">
+                                <button class="btn" type="submit"><i class="fas fa-search"></i> بحث</button>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══ BRAND STRIP ═══ -->
+            <div class="brand-strip">
+                <div class="container">
+                    <div class="brand-strip-inner">
+                        <div class="row g-3">
+                            <div class="col-md-3 col-6">
+                                <div class="item">
+                                    <div class="ico"><i class="fas fa-hand-holding-dollar"></i></div>
+                                    <h6>الدفع عند الاستلام</h6>
+                                    <p>لا تدفع حتى تستلم الطلب</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <div class="item">
+                                    <div class="ico"><i class="fas fa-truck-fast"></i></div>
+                                    <h6>توصيل لكل الولايات</h6>
+                                    <p>58 ولاية جزائرية</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <div class="item">
+                                    <div class="ico"><i class="fas fa-shield"></i></div>
+                                    <h6>منتجات أصلية 100%</h6>
+                                    <p>جودة مضمونة</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <div class="item">
+                                    <div class="ico"><i class="fas fa-headset"></i></div>
+                                    <h6>فريق دعم متواصل</h6>
+                                    <p>في خدمتك دائماً</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══ FEATURES ═══ -->
+            <section class="section">
+                <div class="container">
+                    <div class="section-title">
+                        <h2>لماذا تطلب من {{ site_name }}؟</h2>
+                        <p>نوفر لك تجربة تسوق آمنة ومريحة من منزلك</p>
+                        <div class="bar"></div>
+                    </div>
+                    <div class="row g-4">
+                        <div class="col-lg-3 col-md-6">
+                            <div class="feat-card">
+                                <div class="ico"><i class="fas fa-hand-holding-dollar"></i></div>
+                                <h5>الدفع عند الاستلام</h5>
+                                <p>لا يوجد دفع مسبق. تدفع عند استلام السلعة بعد التأكد منها بنفسك.</p>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="feat-card">
+                                <div class="ico"><i class="fas fa-truck"></i></div>
+                                <h5>توصيل سريع لكل الولايات</h5>
+                                <p>نوصل طلبك إلى باب منزلك في أي ولاية جزائرية في أسرع وقت.</p>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="feat-card">
+                                <div class="ico"><i class="fas fa-shield"></i></div>
+                                <h5>منتجات أصلية مضمونة</h5>
+                                <p>جميع منتجاتنا أصلية 100%. نضمن لك الجودة في كل طلبية.</p>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="feat-card">
+                                <div class="ico"><i class="fas fa-arrow-rotate-left"></i></div>
+                                <h5>استبدال وإرجاع سهل</h5>
+                                <p>إذا لم يناسبك المنتج، نستبدله أو نرجعه لك دون تعقيدات.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══ LATEST PRODUCTS ═══ -->
+            <section class="section section-light" id="products">
+                <div class="container">
+                    <div class="section-title">
+                        <h2>أحدث المنتجات</h2>
+                        <p>تشكيلة واسعة من أفضل المنتجات الأصلية في انتظارك</p>
+                        <div class="bar"></div>
+                    </div>
+                    <div class="row g-4">
+                        {% for product in products %}
+                        <div class="col-lg-4 col-md-6">
+                            <div class="prod-card">
+                                <div class="prod-img">
+                                    {% if product.product_image %}
+                                        <img src="{{ product.product_image.url }}" alt="{{ product.product_name }}" />
+                                    {% else %}
+                                        <div class="d-flex align-items-center justify-content-center h-100 text-muted">
+                                            <i class="fas fa-image fa-3x"></i>
+                                        </div>
+                                    {% endif %}
+                                    <span class="tag">{{ product.get_category_display }}</span>
+                                </div>
+                                <div class="prod-body">
+                                    <h5>{{ product.product_name|truncatewords:6 }}</h5>
+                                    <p class="desc">{{ product.description|striptags|truncatewords:10 }}</p>
+                                    <div class="price">{{ product.price }} <small>د.ج</small></div>
+                                    <a href="{% url 'frontend:product_detail' product.pk %}" class="btn-prod">
+                                        <i class="fas fa-shopping-cart ms-1"></i> اطلب الآن
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="col-12 text-center py-5">
+                            <div class="text-muted fs-5">لا يوجد منتجات متاحة حالياً.</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="text-center mt-5">
+                        <a href="{% url "frontend:product_list" %}" class="btn-prod-outline">
+                            عرض كل المنتجات <i class="fas fa-arrow-left"></i>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══ CATEGORIES ═══ -->
+            <section class="section" id="categories">
+                <div class="container">
+                    <div class="section-title">
+                        <h2>تصفح حسب الفئة</h2>
+                        <p>اختر الفئة المناسبة واحصل على منتجاتك بسرعة</p>
+                        <div class="bar"></div>
+                    </div>
+                    <div class="row g-3">
+                        {% for cat_code, cat_name in categories %}
+                        <div class="col-lg-3 col-md-4 col-6">
+                            <a href="{% url 'frontend:category_details' cat_code %}" class="cat-item">
+                                <div class="ico"><i class="fas fa-tag"></i></div>
+                                <h6>{{ cat_name }}</h6>
+                                <p>تصفح المنتجات</p>
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══ HOW IT WORKS ═══ -->
+            <section class="section section-dark">
+                <div class="container">
+                    <div class="section-title">
+                        <h2>كيف تطلب؟</h2>
+                        <p>ثلاث خطوات فقط ويصلك الطلب إلى باب منزلك</p>
+                        <div class="bar"></div>
+                    </div>
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <div class="step-box">
+                                <div class="circle">1</div>
+                                <h6>اختر المنتج</h6>
+                                <p>تصفح المنتجات واختر ما يعجبك. حدد المقاس واللون والكمية.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="step-box">
+                                <div class="circle">2</div>
+                                <h6>املأ معلوماتك</h6>
+                                <p>أدخل اسمك، رقم هاتفك، وعنوانك الكامل مع اختيار الولاية والبلدية.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="step-box">
+                                <div class="circle">3</div>
+                                <h6>استلم وادفع</h6>
+                                <p>نوصل الطلب إلى باب منزلك، تتفقد المنتج، ثم تدفع.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══ ABOUT ═══ -->
+            <section class="section" id="about">
+                <div class="container">
+                    <div class="section-title">
+                        <h2>من نحن</h2>
+                        <p>تعرّف على {{ site_name }}</p>
+                        <div class="bar"></div>
+                    </div>
+                    <div class="about-wrap">
+                        <div class="row g-0">
+                            <div class="col-lg-6">
+                                <img src="https://images.pexels.com/photos/5632393/pexels-photo-5632393.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                                     alt="{{ site_name }}" />
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="about-body">
+                                    <h3>{{ site_name }}</h3>
+                                    {% if about_text %}<p>{{ about_text }}</p>{% endif %}
+                                    <div class="d-flex gap-2">
+                                        {% if facebook_url %}
+                                        <a href="{{ facebook_url }}" target="_blank" class="social-btn" aria-label="فيسبوك">
+                                            <i class="fab fa-facebook-f"></i>
+                                        </a>
+                                        {% endif %}
+                                        {% if instagram_url %}
+                                        <a href="{{ instagram_url }}" target="_blank" class="social-btn" aria-label="إنستغرام">
+                                            <i class="fab fa-instagram"></i>
+                                        </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══ CONTACT ═══ -->
+            <section class="section contact-section" id="contact">
+                <div class="container">
+                    <div class="section-title">
+                        <h2>اتصل بنا</h2>
+                        <p>نحن هنا للإجابة على استفساراتك</p>
+                        <div class="bar"></div>
+                    </div>
+                    <div class="row g-4">
+                        <div class="col-lg-7">
+                            <form class="contact-form" action="{% url "frontend:contact" %}" method="POST">
+                                {% csrf_token %}
+                                {% include "partials/errorList.html" with form_id="contactForm" %}
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <input type="text" class="form-control" name="fullName" placeholder="الاسم الكامل" required />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="email" class="form-control" name="email" placeholder="البريد الإلكتروني" required />
+                                    </div>
+                                    <div class="col-12">
+                                        <input type="text" class="form-control" name="subject" placeholder="الموضوع" required />
+                                    </div>
+                                    <div class="col-12">
+                                        <textarea class="form-control" name="message" placeholder="رسالتك..." required></textarea>
+                                    </div>
+                                    <div class="col-12">
+                                        <button type="submit" class="btn btn-primary px-5 py-3">
+                                            <i class="fas fa-paper-plane ms-1"></i> إرسال الرسالة
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-lg-5">
+                            <div class="contact-side">
+                                {% if address %}
+                                <div class="ci">
+                                    <div class="dot"><i class="fas fa-map-marker-alt"></i></div>
+                                    <div class="tx">{{ address }}</div>
+                                </div>
+                                {% endif %}
+                                {% if phone_number %}
+                                <div class="ci">
+                                    <div class="dot"><i class="fas fa-phone"></i></div>
+                                    <div class="tx" dir="ltr">{{ phone_number }}</div>
+                                </div>
+                                {% endif %}
+                                {% if email %}
+                                <div class="ci">
+                                    <div class="dot"><i class="fas fa-envelope"></i></div>
+                                    <div class="tx">{{ email }}</div>
+                                </div>
+                                {% endif %}
+                                <div class="mt-4 d-flex gap-2">
+                                    {% if facebook_url %}
+                                    <a href="{{ facebook_url }}" target="_blank" class="fsocial"><i class="fab fa-facebook-f"></i></a>
+                                    {% endif %}
+                                    {% if instagram_url %}
+                                    <a href="{{ instagram_url }}" target="_blank" class="fsocial"><i class="fab fa-instagram"></i></a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {% endblock content %}
+        </main>
+
+        {% block footer %}
+        <footer class="footer">
+            <div class="container">
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <h5>{{ site_name }}</h5>
+                        {% if headline %}<p class="fdesc">{{ headline }}</p>{% endif %}
+                        <div class="d-flex gap-2">
+                            {% if facebook_url %}
+                            <a href="{{ facebook_url }}" target="_blank" class="fsocial"><i class="fab fa-facebook-f"></i></a>
+                            {% endif %}
+                            {% if instagram_url %}
+                            <a href="{{ instagram_url }}" target="_blank" class="fsocial"><i class="fab fa-instagram"></i></a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <h5>روابط سريعة</h5>
+                        <a href="{% url 'frontend:product_list' %}">المنتجات</a>
+                        <a href="#categories">الفئات</a>
+                        <a href="#about">من نحن</a>
+                        <a href="#contact">اتصل بنا</a>
+                    </div>
+                    <div class="col-md-4">
+                        <h5>الدعم</h5>
+                        <a href="{% url 'frontend:order_lookup' %}">تتبع طلبك</a>
+                        <a href="#contact">مساعدة</a>
+                    </div>
+                </div>
+                <div class="bot">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center">
+                        <p>جميع الحقوق محفوظة &copy; {% now "Y" %} {{ site_name }}</p>
+                        <p>تطوير <a href="https://mo7amed.vercel.app/" target="_blank">عمراوي محمد</a></p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        {% endblock footer %}
+
+        <script>
+            document.querySelector('.ham')?.addEventListener('click', function(){
+                document.querySelector('.nav-menu').classList.toggle('show');
+            });
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+                integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+                crossorigin="anonymous"></script>
+        <script src="{% static "js/custom_select.js" %}?v={% now "U" %}"></script>
+        <script src="{% static "js/index.js" %}?v={% now "U" %}"></script>
+        {% block js %}{% endblock js %}
+        {% block extra_js %}{% endblock extra_js %}
+    </body>
+</html>

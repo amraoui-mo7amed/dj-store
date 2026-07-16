@@ -1,0 +1,13 @@
+/* dash_home.css — minimal overrides, most styling in dash_index.css */
+.stat-card {
+  cursor: pointer;
+}
+
+.stat-card .card-body i {
+  font-size: 2rem;
+  margin-left: 1rem;
+}
+
+.chart-card {
+  min-height: 250px;
+}

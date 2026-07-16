@@ -1,0 +1,119 @@
+{% extends "index.html" %}
+
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet"
+          href="{% static 'css/dash_index.css' %}?v={% now "U" %}" />
+    {% block extra_css %}{% endblock extra_css %}
+{% endblock css %}
+
+{% block nav %}{% endblock nav %}
+
+{% block content %}
+    <div class="dash-layout">
+        <div class="dash-backdrop" id="dashBackdrop"></div>
+
+        <aside id="sidebar"
+               data-user-id="{{ request.user.pk }}"
+               class="sidebar"
+               dir="rtl">
+            <nav class="sidebar-nav">
+                <div class="sidebar-head">
+                    {% if request.user.avatar %}
+                        <img src="{{ request.user.avatar.url }}" alt="" class="sidebar-avatar" />
+                    {% else %}
+                        <div class="sidebar-avatar sidebar-avatar-fallback">
+                            {{ request.user.username|first|upper }}
+                        </div>
+                    {% endif %}
+                    <div class="sidebar-user">
+                        <h3>{{ request.user.username }}</h3>
+                        <small>لوحة التحكم</small>
+                    </div>
+                </div>
+
+                <div class="sidebar-menu">
+                    <a href="{% url "dash:dash_home" %}" class="sidebar-link">
+                        <i class="fas fa-tachometer-alt fa-fw"></i>
+                        <span>لوحة التحكم</span>
+                    </a>
+                    <a href="{% url "dash:stock_list" %}" class="sidebar-link">
+                        <i class="fas fa-boxes fa-fw"></i>
+                        <span>المخزون</span>
+                    </a>
+                    <a href="{% url "dash:sales_list" %}" class="sidebar-link">
+                        <i class="fas fa-shopping-cart fa-fw"></i>
+                        <span>الطلبيات</span>
+                    </a>
+                    <a href="{% url "dash:reports" %}" class="sidebar-link">
+                        <i class="fas fa-chart-bar fa-fw"></i>
+                        <span>التقارير</span>
+                    </a>
+                </div>
+
+                <div class="sidebar-footer">
+                    <a href="{% url "dash:profile" %}" class="sidebar-link">
+                        <i class="fas fa-user fa-fw"></i>
+                        <span>الملف الشخصي</span>
+                    </a>
+                    <a href="{% url "user_auth:logout" %}" class="sidebar-link sidebar-logout">
+                        <i class="fas fa-sign-out-alt fa-fw"></i>
+                        <span>خروج</span>
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <div class="dash-main">
+            <div class="dash-topbar">
+                <h4 class="dash-title">
+                    {% block dashTitle %}لوحة التحكم{% endblock dashTitle %}
+                </h4>
+                <div class="dash-toolbar">
+                    <div class="notification-dropdown">
+                        <div class="notif-trigger">
+                            <i class="fas fa-bell"></i>
+                            <span class="notif-badge">0</span>
+                        </div>
+                        <div class="notif-menu">
+                            <div class="notif-header">
+                                <h4>الإشعارات</h4>
+                                <span class="notif-count">0 جديد</span>
+                            </div>
+                            <ul class="notif-list">
+                                <li class="notif-item notif-empty">
+                                    <span>لا توجد إشعارات جديدة</span>
+                                </li>
+                            </ul>
+                            <div class="notif-footer">
+                                <a href="#" id="mark-all-read-btn">تعليم الكل كمقروء</a>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="sidebar-toggle" type="button" aria-label="القائمة">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="dash-body">
+                {% block dashContent %}{% endblock dashContent %}
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block footer %}
+    <div class="toast-container position-fixed bottom-0 end-0 p-3"
+         id="toast-container">
+    </div>
+{% endblock footer %}
+
+{% block js %}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="{% static 'js/dash_index.js' %}?v={% now "U" %}"></script>
+    <script src="{% static 'js/notifications.js' %}?v={% now "U" %}"></script>
+{% endblock js %}
+
+{% block extra_js %}
+{% endblock extra_js %}

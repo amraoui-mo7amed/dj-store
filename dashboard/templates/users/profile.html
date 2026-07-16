@@ -1,0 +1,81 @@
+{% extends "dash/dash_index.html" %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'users/css/profile.css' %}?v={% now "U" %}" />
+{% endblock extra_css %}
+
+{% block dashTitle %}
+    الملف الشخصي
+{% endblock dashTitle %}
+
+{% block dashContent %}
+<div class="profile-page">
+
+    <div class="profile-cover">
+        <div class="profile-cover-overlay"></div>
+        <div class="profile-summary">
+            <div class="profile-summary-avatar">
+                {% if profile.avatar %}
+                    <img src="{{ profile.avatar.url }}" alt="" id="avatarPreview">
+                {% else %}
+                    <div class="avatar-placeholder" id="avatarPlaceholder">{{ user.username|first|upper }}</div>
+                    <img src="" alt="" class="d-none" id="avatarPreview">
+                {% endif %}
+                <label for="id_avatar" class="avatar-edit-btn">
+                    <i class="fas fa-camera"></i>
+                </label>
+                <input type="file" name="avatar" id="id_avatar" class="d-none" accept="image/*">
+            </div>
+            <div class="profile-summary-info">
+                <h4>{{ user.username }}</h4>
+                <span class="badge bg-coral-500 rounded-pill">عضو</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-body">
+        <form class="form"
+              action="{% url 'dash:profile' %}"
+              method="POST"
+              enctype="multipart/form-data"
+              id="profileForm">
+            {% csrf_token %}
+            {% include "partials/errorList.html" with form_id="profileForm" %}
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <label class="form-label" for="id_username">اسم المستخدم</label>
+                    <input type="text" name="username" id="id_username" value="{{ user.username }}" class="form-control" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="id_email">البريد الإلكتروني</label>
+                    <input type="email" name="email" id="id_email" value="{{ user.email }}" class="form-control" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="id_phone">رقم الهاتف</label>
+                    <input type="text" name="phone" id="id_phone" value="{{ profile.phone|default:'' }}" class="form-control">
+                </div>
+                <div class="col-md-6">
+                    {% include "components/custom_select.html" with id="id_wilaya" label="الولاية" name="wilaya" choices=wilayas select_title=profile.get_wilaya_display value=profile.wilaya|default:'' %}
+                </div>
+                <div class="col-12">
+                    <label class="form-label" for="id_bio">نبذة</label>
+                    <textarea name="bio" id="id_bio" class="form-control" rows="3">{{ profile.bio|default:'' }}</textarea>
+                </div>
+            </div>
+
+            <div class="profile-actions">
+                <button type="submit" class="btn btn-coral-primary">
+                    <i class="fas fa-save me-1"></i> حفظ التغييرات
+                </button>
+            </div>
+        </form>
+    </div>
+
+</div>
+{% endblock dashContent %}
+
+{% block extra_js %}
+    <script src="{% static 'users/js/profile.js' %}?v={% now "U" %}"></script>
+{% endblock extra_js %}

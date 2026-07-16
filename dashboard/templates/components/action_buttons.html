@@ -1,0 +1,11 @@
+<div class="d-flex align-items-center gap-1">
+    <a class="btn btn-warning btn-sm rounded" href="{{ edit_url }}" title="تعديل">
+        <i class="fas fa-edit ms-1"></i> تعديل
+    </a>
+    <button class="btn btn-danger btn-sm rounded delete_button"
+            data-csrf-token="{{ csrf_token }}"
+            data-delete-url="{{ delete_url }}"
+            title="حذف">
+        <i class="fas fa-trash ms-1"></i> حذف
+    </button>
+</div>

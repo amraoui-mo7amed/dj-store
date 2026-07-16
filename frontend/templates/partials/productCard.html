@@ -1,0 +1,41 @@
+<div class="col-md-6 col-lg-4 col-sm-12">
+    <div class="product-card">
+        <div class="product-img">
+            {% if product.product_image %}
+                <img src="{{ product.product_image.url }}"
+                     alt="{{ product.product_name }}" />
+            {% else %}
+                <div class="product-img-placeholder d-flex align-items-center justify-content-center">
+                    <i class="fas fa-image fa-3x text-muted"></i>
+                </div>
+            {% endif %}
+        </div>
+        <div class="product-info">
+            <div class="product-category position-absolute top-0 start-0 bg-accent text-white px-2 py-1 rounded-1 z-3">
+                {{ product.get_category_display }}
+            </div>
+            <h3 class="product-title text-truncate"
+                title="{{ product.product_name }}">
+                {{ product.product_name }}
+            </h3>
+            <p class="m-0 product-about">
+                {{ product.description|truncatewords:20 }}
+            </p>
+            <div class="d-flex align-items-center justify-content-between">
+                <p class="m-0 fw-bold">
+                    السعر
+                </p>
+                <p class="fw-bold m-0 ">
+                    {{ product.price }} DZD
+                </p>
+            </div>
+
+        </div>
+        <div class="card-actions d-flex"> 
+            <a href="{% url "frontend:product_detail" product.pk %}"
+               class="btn btn-primary ms-auto rounded-0">
+                عرض التفاصيل
+            </a>
+        </div>
+    </div>
+</div>

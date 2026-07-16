@@ -1,0 +1,141 @@
+{% extends "dash/dash_index.html" %}
+
+{% load static tags %}
+
+{% block dashTitle %}
+    <span>تعديل المنتج: {{ product.product_name }}</span>
+{% endblock dashTitle %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/stock_list.css' %}?v={% now "U" %}" />
+    <link rel="stylesheet" href="{% static 'css/image_upload.css' %}?v={% now "U" %}" />
+    <link rel="stylesheet" href="{% static 'css/stock_form.css' %}?v={% now "U" %}" />
+{% endblock extra_css %}
+
+{% block dashContent %}
+<form id="editProductForm"
+      method="post"
+      action="{% url 'dash:edit_stock' product.pk %}"
+      enctype="multipart/form-data"
+      class="create-stock-page">
+    {% csrf_token %}
+
+    <div class="csf-cards">
+
+        <div class="csf-card">
+            <div class="csf-card-header">
+                <i class="fas fa-image"></i>
+                <span>صور المنتج</span>
+            </div>
+            <div class="csf-card-body">
+                <div class="csf-group">
+                    <label class="csf-label"><i class="fas fa-camera"></i> الصورة الرئيسية</label>
+                    {% include "components/image_upload.html" with label="" wrapper_id="productImageWrapper" input_id="edit_file" input_name="product_image" multiple=False %}
+                    {% if product.product_image %}
+                    <div id="initialMainImage" data-url="{{ product.product_image.url }}"></div>
+                    {% endif %}
+                </div>
+                <div class="csf-group">
+                    <label class="csf-label"><i class="fas fa-images"></i> معرض الصور الإضافية</label>
+                    {% include "components/image_upload.html" with label="" wrapper_id="editGalleryWrapper" input_id="editGalleryInput" input_name="gallery" multiple=True %}
+                    <input type="hidden" name="deleted_gallery_images" id="deletedGalleryImagesInput">
+                    <div id="initialGallery" class="d-none">
+                        {% for img in product.gallery.all %}
+                            <div class="gallery-item-data" data-id="{{ img.id }}" data-url="{{ img.image.url }}"></div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="csf-card">
+            <div class="csf-card-header">
+                <i class="fas fa-info-circle"></i>
+                <span>معلومات أساسية</span>
+            </div>
+            <div class="csf-card-body">
+                <div class="csf-group">
+                    <label class="csf-label"><i class="fas fa-heading"></i> اسم المنتج الكامل</label>
+                    <input type="text" class="csf-input" id="product_name" name="product_name" value="{{ product.product_name }}" required>
+                </div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="csf-label"><i class="fas fa-tag"></i> تصنيف المنتج</label>
+                        <div class="custom-select-wrapper">
+                            <div class="custom-select-trigger">
+                                <span class="trigger-text">{{ product.get_category_display }}</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="custom-options-container">
+                                {% for value, label in category_choices %}
+                                    <div class="custom-option {% if product.category == value %}selected{% endif %}" data-value="{{ value }}">
+                                        {{ label }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <input type="hidden" id="category" name="category" value="{{ product.category }}" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="csf-label"><i class="fas fa-dollar-sign"></i> سعر البيع</label>
+                        <input type="number" step="0.01" class="csf-input" id="price" name="price" min="0" value="{{ product.price }}" required>
+                    </div>
+                </div>
+                <div class="csf-group">
+                    <label class="csf-label"><i class="fas fa-align-left"></i> وصف المنتج</label>
+                    <textarea class="csf-input" id="description" name="description" required>{{ product.description }}</textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="csf-card">
+            <div class="csf-card-header">
+                <i class="fas fa-sliders-h"></i>
+                <span>المخزون والخيارات</span>
+            </div>
+            <div class="csf-card-body">
+                <div class="csf-group">
+                    <label class="csf-label"><i class="fas fa-cubes"></i> الكمية المتوفرة</label>
+                    <input type="number" class="csf-input" id="quantity" name="quantity" min="0" value="{{ product.quantity }}" required style="max-width:200px;">
+                </div>
+                <div class="csf-group">
+                    <label class="csf-label"><i class="fas fa-ruler"></i> المقاسات المتاحة</label>
+                    <div class="size-box-container" id="editSizeContainer">
+                        {% for size in predefined_sizes %}
+                            <div class="size-option" data-size="{{ size }}">{{ size }}</div>
+                        {% endfor %}
+                    </div>
+                    <input type="hidden" name="sizes" id="editSizesInput" value="{{ product.sizes }}">
+                    <small class="csf-hint">اختر المقاسات المتوفرة بالضغط عليها</small>
+                </div>
+                <div class="csf-group">
+                    <label class="csf-label"><i class="fas fa-palette"></i> الألوان المتاحة</label>
+                    <div class="color-box-container" id="editColorContainer">
+                        {% for hex, name in available_colors %}
+                            <div class="color-option"
+                                 style="background-color: {{ hex }};"
+                                 data-color="{{ hex }}"
+                                 title="{{ name }}"></div>
+                        {% endfor %}
+                    </div>
+                    <input type="hidden" name="colors" id="editColorsInput" value="{{ product.colors }}">
+                    <small class="csf-hint">اختر الألوان المتوفرة بالضغط عليها</small>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="csf-footer">
+        <a href="{% url 'dash:stock_list' %}" class="csf-btn csf-btn-outline"><i class="fas fa-arrow-right ms-1"></i> تراجع</a>
+        <button type="submit" class="csf-btn csf-btn-primary"><i class="fas fa-sync-alt me-1"></i> تحديث المنتج</button>
+    </div>
+</form>
+{% endblock dashContent %}
+
+{% block extra_js %}
+    <script src="{% static 'js/stock_list.js' %}?v={% now 'U' %}"></script>
+    <script src="{% static 'js/image_upload.js' %}?v={% now 'U' %}"></script>
+    <script src="{% static 'js/stock_create.js' %}?v={% now 'U' %}"></script>
+    <script src="{% static 'js/stock_edit.js' %}?v={% now 'U' %}"></script>
+{% endblock extra_js %}

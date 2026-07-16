@@ -1,0 +1,23 @@
+<div class="custom-select-wrapper full-width" dir="rtl" id="{{ id }}">
+    <label class="custom-select-label" for="{{ id }}_input">
+        {{ label }}
+    </label>
+    <div class="custom-select-display">
+        {% if select_title %}
+            {{ select_title }}
+        {% else %}
+            اختر عنصراً
+        {% endif %}
+        <span class="arrow">
+            <i class="fas fa-caret-down"></i>
+        </span>
+    </div>
+    <ul class="custom-select-list">
+        {% for value, text in choices %}
+            <li data-value="{{ value }}">
+                {{ text }}
+            </li>
+        {% endfor %}
+    </ul>
+    <input type="hidden" id="{{ id }}_input" name="{{ name }}" value="{{ value|default:'' }}" />
+</div>

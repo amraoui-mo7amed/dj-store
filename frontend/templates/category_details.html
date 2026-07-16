@@ -1,0 +1,72 @@
+{% extends 'index.html' %}
+
+{% load static %}
+
+{% block title %}
+    {{ category.name }} -
+{% endblock title %}
+
+{% block nav %}
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="homeNav">
+        <div class="container">
+            <a class="navbar-brand" href="{% url "frontend:index" %}">
+                {{ site_name }}
+            </a>
+            <button class="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url "frontend:index" %}">الرئيسية</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url "frontend:category_list" %}">الفئات</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url "frontend:index" %}#contact">اتصل بنا</a>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+    </nav>
+{% endblock nav %}
+
+{% block content %}
+    <section class="hero mb-3">
+        <div class="container">
+            <div class="hero-content">
+                <h1>
+                    {{ category.name }}
+                </h1>
+                <p>
+                    استكشف منتجاتنا في فئة {{ category.name }} لتجد ما يناسب احتياجاتك
+                </p>
+            </div>
+        </div>
+    </section>
+    <div class="container-fluid ">
+        <h1 class="text-center mb-4">
+            {{ category.name }}
+        </h1>
+        <div class="container-fluid">
+            {% if products %}
+                <div class="row  g-4">
+                    {% for product in products %}
+                        {% include 'partials/productCard.html' with product=product %}
+
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-danger text-center" role="alert">
+                    لا توجد منتجات في هذه الفئة.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock content %}

@@ -1,0 +1,82 @@
+{% extends "dash/dash_index.html" %}
+
+{% load static %}
+
+{% block dashTitle %}
+    <span>قائمة المخزونات</span>
+{% endblock dashTitle %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/stock_list.css' %}?v={% now "U" %}" />
+    <link rel="stylesheet" href="{% static 'css/image_upload.css' %}?v={% now "U" %}" />
+{% endblock extra_css %}
+
+{% block dashContent %}
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body p-4">
+            {% if page_obj %}
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <a href="{% url 'dash:stock_create' %}" class="btn btn-primary">
+                        <i class="fas fa-plus ms-1"></i> إضافة منتج جديد
+                    </a>
+                </div>
+
+                <div class="row g-3">
+                    {% for product in page_obj %}
+                        <div class="col-12 col-md-6 col-lg-4">
+                            <div class="list-card h-100">
+                                <div class="card-header d-flex align-items-center justify-content-between">
+                                    <span class="fw-bold text-truncate ms-2">{{ product.product_name|truncatechars:24 }}</span>
+                                    <span class="badge bg-light text-dark rounded-pill flex-shrink-0">#{{ product.id|stringformat:"04d" }}</span>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row g-2">
+                                        <div class="col-6">
+                                            <p class="list-label">الكمية</p>
+                                            <p class="list-value">{{ product.quantity }}</p>
+                                        </div>
+                                        <div class="col-6">
+                                            <p class="list-label">سعر البيع</p>
+                                            <p class="list-value">{{ product.price }} دج</p>
+                                        </div>
+                                        <div class="col-6">
+                                            <p class="list-label">الطلبيات</p>
+                                            <p class="list-value">{{ product.sales_count }}</p>
+                                        </div>
+                                        <div class="col-6">
+                                            <p class="list-label">الفئة</p>
+                                            <p class="list-value">{{ product.get_category_display }}</p>
+                                        </div>
+                                        <div class="col-12">
+                                            <p class="list-label">تاريخ الإضافة</p>
+                                            <p class="list-value small">{{ product.created_at|date:"Y-m-d" }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-footer d-flex gap-1 justify-content-end">
+                                    {% url "dash:delete_stock" product.pk as delete_url %}
+                                    {% url "dash:edit_stock" product.pk as edit_url %}
+                                    {% include "components/action_buttons.html" with delete_url=delete_url edit_url=edit_url %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                {% include "components/pagination.html" %}
+
+            {% else %}
+                <div class="d-flex flex-column align-items-center justify-content-center p-4 text-center border rounded bg-light">
+                    <p class="mb-3 text-muted fs-5">لا توجد منتجات بعد. يمكنك إضافة منتجات جديدة باستخدام الزر أدناه.</p>
+                    <a href="{% url 'dash:stock_create' %}" class="btn btn-primary">
+                        <i class="fas fa-plus ms-1"></i> إضافة منتج جديد
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock dashContent %}
+
+{% block extra_js %}
+    <script src="{% static 'js/stock_list.js' %}?v={% now "U" %}"></script>
+{% endblock extra_js %}

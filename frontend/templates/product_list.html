@@ -1,0 +1,215 @@
+{% extends "index.html" %}
+
+{% load static %}
+
+{% block title %}— {{ headline }} | {{ site_name }}{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/product_list.css' %}?v={% now "U" %}" />
+{% endblock %}
+
+{% block content %}
+<section class="catalog-hero">
+    <div class="container">
+        <div class="ch-content">
+            <h1>قائمة المنتجات</h1>
+            <p>اكتشف مجموعتنا المميزة من المنتجات</p>
+        </div>
+        <form method="GET" action="{% url 'frontend:product_list' %}" class="ch-filters">
+            <div class="ch-filter-row">
+                <div class="ch-search">
+                    <i class="fas fa-search"></i>
+                    <input type="text" name="search" placeholder="ابحث عن منتج..." value="{{ current_search|default:'' }}">
+                </div>
+                <div class="ch-custom-select" data-filter="category">
+                    <div class="ch-custom-trigger">
+                        <span class="ch-custom-text">{{ current_category_label|default:'كل الفئات' }}</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="ch-custom-options">
+                        <div class="ch-custom-option" data-value="">كل الفئات</div>
+                        {% for k, v in categories %}
+                            <div class="ch-custom-option {% if current_category == k %}selected{% endif %}" data-value="{{ k }}">{{ v }}</div>
+                        {% endfor %}
+                    </div>
+                    <select name="category" class="d-none">
+                        <option value="">كل الفئات</option>
+                        {% for k, v in categories %}
+                            <option value="{{ k }}" {% if current_category == k %}selected{% endif %}>{{ v }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="ch-custom-select" data-filter="sort_by">
+                    <div class="ch-custom-trigger">
+                        <span class="ch-custom-text">{{ current_sort_label|default:'ترتيب' }}</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="ch-custom-options">
+                        <div class="ch-custom-option" data-value="">ترتيب</div>
+                        <div class="ch-custom-option {% if current_sort == 'price_asc' %}selected{% endif %}" data-value="price_asc">السعر: الأقل</div>
+                        <div class="ch-custom-option {% if current_sort == 'price_desc' %}selected{% endif %}" data-value="price_desc">السعر: الأعلى</div>
+                        <div class="ch-custom-option {% if current_sort == 'newest' %}selected{% endif %}" data-value="newest">الأحدث</div>
+                        <div class="ch-custom-option {% if current_sort == 'popular' %}selected{% endif %}" data-value="popular">الأكثر شهرة</div>
+                    </div>
+                    <select name="sort_by" class="d-none">
+                        <option value="">ترتيب</option>
+                        <option value="price_asc" {% if current_sort == 'price_asc' %}selected{% endif %}>السعر: الأقل</option>
+                        <option value="price_desc" {% if current_sort == 'price_desc' %}selected{% endif %}>السعر: الأعلى</option>
+                        <option value="newest" {% if current_sort == 'newest' %}selected{% endif %}>الأحدث</option>
+                        <option value="popular" {% if current_sort == 'popular' %}selected{% endif %}>الأكثر شهرة</option>
+                    </select>
+                </div>
+                <div class="ch-actions">
+                    <button type="submit" class="ch-btn ch-btn-filter"><i class="fas fa-filter"></i> فلتر</button>
+                    {% if current_category or current_search or current_sort or current_min_price or current_max_price or current_in_stock %}
+                        <a href="{% url 'frontend:product_list' %}" class="ch-btn ch-btn-clear"><i class="fas fa-times"></i></a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="ch-extras" id="chExtras">
+                <div class="ch-price-range">
+                    <input type="number" name="min_price" placeholder="سعر من" value="{{ current_min_price|default:'' }}">
+                    <span>—</span>
+                    <input type="number" name="max_price" placeholder="سعر إلى" value="{{ current_max_price|default:'' }}">
+                </div>
+                <label class="ch-stock-toggle">
+                    <input type="checkbox" name="in_stock" value="true" {% if current_in_stock == 'true' %}checked{% endif %}>
+                    <span>متوفر فقط</span>
+                </label>
+            </div>
+        </form>
+    </div>
+</section>
+
+<div class="container">
+    <div class="catalog-body">
+        {% for product in products %}
+            <div class="catalog-card" data-product-id="{{ product.pk }}">
+                <div class="cc-img">
+                    {% if product.product_image %}
+                        <img src="{{ product.product_image.url }}" alt="{{ product.product_name }}" loading="lazy">
+                    {% else %}
+                        <div class="cc-img-placeholder"><i class="fas fa-image"></i></div>
+                    {% endif %}
+                    <span class="cc-badge">{{ product.get_category_display }}</span>
+                </div>
+                <div class="cc-body">
+                    <h3 class="cc-title" title="{{ product.product_name }}">{{ product.product_name }}</h3>
+                    <p class="cc-desc">{{ product.description|truncatewords:15 }}</p>
+                    <div class="cc-price">{{ product.price }} <small>دج</small></div>
+
+                    {% if product.colors %}
+                    <div class="cc-option-group">
+                        <span class="cc-option-label"><i class="fas fa-palette"></i> الألوان</span>
+                        <div class="cc-colors" data-type="color">
+                            {% for color in product.get_colors_list %}
+                                <button class="cc-color-dot" style="background:{{ color }}" data-value="{{ color }}" title="{{ color }}">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if product.sizes %}
+                    <div class="cc-option-group">
+                        <span class="cc-option-label"><i class="fas fa-ruler"></i> المقاسات</span>
+                        <div class="cc-sizes" data-type="size">
+                            {% for size in product.get_sizes_list %}
+                                <button class="cc-size-pill" data-value="{{ size }}">{{ size }}</button>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <div class="cc-actions">
+                        <a href="{% url 'frontend:product_detail' product.pk %}" class="cc-btn cc-btn-primary">عرض التفاصيل</a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="catalog-empty">
+                <i class="fas fa-box-open"></i>
+                <h3>لا توجد منتجات</h3>
+                <p>لم نعثر على منتجات تطابق بحثك. جرب تصفية مختلفة.</p>
+                <a href="{% url 'frontend:product_list' %}" class="cc-btn cc-btn-primary">عرض الكل</a>
+            </div>
+        {% endfor %}
+    </div>
+
+    {% if page_obj.paginator.num_pages > 1 %}
+    <nav class="catalog-pagination">
+        <ul>
+            {% if page_obj.has_previous %}
+                <li><a href="?page={{ page_obj.previous_page_number }}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_search %}&search={{ current_search }}{% endif %}{% if current_sort %}&sort_by={{ current_sort }}{% endif %}"><i class="fas fa-chevron-right"></i></a></li>
+            {% endif %}
+            {% for num in page_obj.paginator.page_range %}
+                <li><a href="?page={{ num }}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_search %}&search={{ current_search }}{% endif %}{% if current_sort %}&sort_by={{ current_sort }}{% endif %}" class="{% if page_obj.number == num %}active{% endif %}">{{ num }}</a></li>
+            {% endfor %}
+            {% if page_obj.has_next %}
+                <li><a href="?page={{ page_obj.next_page_number }}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_search %}&search={{ current_search }}{% endif %}{% if current_sort %}&sort_by={{ current_sort }}{% endif %}"><i class="fas fa-chevron-left"></i></a></li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Custom Select
+    function closeAllCustomSelects() {
+        document.querySelectorAll('.ch-custom-select.open').forEach(function(w) { w.classList.remove('open'); });
+    }
+
+    document.querySelectorAll('.ch-custom-trigger').forEach(function(trigger) {
+        trigger.addEventListener('click', function(e) {
+            e.stopPropagation();
+            var wrapper = this.closest('.ch-custom-select');
+            var isOpen = wrapper.classList.contains('open');
+            closeAllCustomSelects();
+            if (!isOpen) wrapper.classList.add('open');
+        });
+    });
+
+    document.querySelectorAll('.ch-custom-option').forEach(function(opt) {
+        opt.addEventListener('click', function() {
+            var wrapper = this.closest('.ch-custom-select');
+            var triggerText = wrapper.querySelector('.ch-custom-text');
+            var select = wrapper.querySelector('select');
+            var value = this.dataset.value;
+
+            triggerText.textContent = this.textContent.trim();
+            select.value = value;
+            wrapper.classList.remove('open');
+
+            wrapper.querySelectorAll('.ch-custom-option').forEach(function(o) { o.classList.remove('selected'); });
+            this.classList.add('selected');
+        });
+    });
+
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.ch-custom-select')) {
+            closeAllCustomSelects();
+        }
+    });
+
+    // Color & size selection
+    document.querySelectorAll('.cc-color-dot').forEach(function(dot) {
+        dot.addEventListener('click', function() {
+            var group = this.closest('.cc-colors');
+            group.querySelectorAll('.cc-color-dot').forEach(function(d) { d.classList.remove('selected'); });
+            this.classList.add('selected');
+        });
+    });
+    document.querySelectorAll('.cc-size-pill').forEach(function(pill) {
+        pill.addEventListener('click', function() {
+            var group = this.closest('.cc-sizes');
+            group.querySelectorAll('.cc-size-pill').forEach(function(p) { p.classList.remove('selected'); });
+            this.classList.add('selected');
+        });
+    });
+});
+</script>
+{% endblock extra_js %}

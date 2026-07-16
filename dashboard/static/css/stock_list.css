@@ -1,0 +1,75 @@
+/* ── Card list styles ── */
+.list-card {
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  transition: box-shadow 0.2s;
+}
+.list-card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+.list-card .card-header {
+  background: transparent;
+  border-bottom: 1px solid #f1f3f5;
+  padding: 0.75rem 1rem;
+}
+.list-card .card-body {
+  padding: 1rem;
+}
+.list-card .card-footer {
+  padding: 0.5rem 1rem;
+}
+.list-label {
+  font-size: 0.8rem;
+  color: #868e96;
+  margin-bottom: 0;
+}
+.list-value {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #212529;
+}
+
+/* From Uiverse.io by Yaya12085 */
+.custum-file-upload {
+    height: 100%;
+    width: 100%;
+    aspect-ratio: 1/1;
+    display: flex;
+    flex-direction: column;
+    align-items: space-between;
+    gap: 20px;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed #cacaca;
+    background-color: rgba(255, 255, 255, 1);
+    padding: 5px;
+    border-radius: 10px;
+    box-shadow: 0px 48px 35px -48px rgba(0, 0, 0, 0.1);
+}
+
+.custum-file-upload .icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.custum-file-upload .icon svg {
+    height: 80px;
+    fill: rgba(75, 85, 99, 1);
+}
+
+.custum-file-upload .text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.custum-file-upload .text span {
+    font-weight: 400;
+    color: rgba(75, 85, 99, 1);
+}
+
+.custum-file-upload input {
+    display: none;
+}

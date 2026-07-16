@@ -1,0 +1,114 @@
+/* Card container */
+#stats .card {
+    border: none;
+    border-radius: 1rem;
+    padding: 1.2rem 1.5rem;
+    color: #fff;
+    display: flex;
+    flex-direction: row;
+    /* icon + text in a row */
+    align-items: center;
+    justify-content: flex-start;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    min-height: 100px;
+}
+
+/* Card hover effect */
+#stats .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Card colors */
+#stats .card-revenue {
+    background: linear-gradient(135deg, #4a90e2, #357ab8);
+}
+#stats .card-pending {
+    background: linear-gradient(135deg, #ffc107, #e0a800);
+    color: #212529;
+}
+
+#stats .card-confirmed {
+    background: linear-gradient(135deg, #17a2b8, #138496);
+}
+
+#stats .card-shipped {
+    background: linear-gradient(135deg, #6f42c1, #5a36a8);
+}
+
+#stats .card-delivered {
+    background: linear-gradient(135deg, #28a745, #1e7e34);
+}
+
+#stats .card-cancelled {
+    background: linear-gradient(135deg, #dc3545, #bd2130);
+}
+
+#stats .card-items {
+    background: linear-gradient(135deg, #28a745, #1e7e34);
+}
+
+#stats .card-count {
+    background: linear-gradient(135deg, #ffc107, #e0a800);
+    color: #212529;
+}
+
+/* Icon inside card */
+#stats .card > i {
+    font-size: 2.5rem;
+    margin-left: 1rem;
+    /* space between icon and text */
+    opacity: 0.9;
+}
+
+/* Card text container */
+#stats .card .card-text {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Card title */
+#stats .card h6 {
+    font-size: 1rem;
+    margin: 0 0 0.3rem 0;
+}
+
+/* Card value */
+#stats .card p {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+
+
+#orderDetailsModal .card
+{
+    flex-direction: column;
+    padding: 0;
+}
+#orderDetailsModal .card-body ,
+#orderDetailsModal .card-header 
+{
+    width: 100%;
+}
+#orderDetailsModal .card-header h6
+{
+    color: #fff;
+    margin-bottom: 0 !important;
+    position: unset ;
+}
+#orderDetailsModal .card-body 
+{
+
+    color: var(--primary-color);
+}
+#orderDetailsModal .card-body > div 
+{
+    flex-direction: column !important;
+    width: 100%;
+    justify-content: start !important;
+    align-items: start !important;
+    text-align: right !important;
+}

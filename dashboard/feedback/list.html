@@ -1,0 +1,200 @@
+{% extends 'dash/index.html' %}
+
+{% load i18n static %}
+
+{% block dashtitle %}
+    {% trans 'قائمة التقييمات' %}
+{% endblock dashtitle %}
+{% block dashContent %}
+    <div class="container">
+        <div class="row g-2">
+            {% for feedback in feedbacks %}
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <div class="card shadow-sm h-100 position-relative">
+                        <div class="card-body">
+                            <div class="row g-2">
+                                <div class="col-md-4">
+                                    {% if feedback.picture %}
+                                        <img src="{{ feedback.picture.url }}"
+                                             alt="Feedback Picture"
+                                             class="img-fluid rounded mb-3"
+                                             style="width: 100px;
+                                                    height: 100px;
+                                                    object-fit: cover" />
+                                    {% else %}
+                                        <span class="bg-primary fs-3 text-light text-center p-4 rounded w-100 d-block h-100">
+                                            {{ feedback.name|first }}
+                                        </span>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-8">
+                                    <h5 class="card-title text-truncate mb-0 text-bold">
+                                        {{ feedback.name }}
+                                    </h5>
+                                    <p class="card-text text-muted text-truncate mb-1">
+                                        {{ feedback.email }}
+                                    </p>
+                                    <p class="card-text">
+                                        {{ feedback.description|truncatechars:35 }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer d-flex gap-2 justify-content-between align-items-center">
+                            {% if feedback.is_approved %}
+                                <span class="badge bg-success position-absolute start-0 top-0 mt-1 ms-3 rounded-0">{% trans 'تمت الموافقة' %}</span>
+                            {% else %}
+                                <span class="badge bg-danger position-absolute start-0 top-0 mt-1 ms-3 rounded-0">{% trans 'قيد الانتظار' %}</span>
+                            {% endif %}
+                            <div class="d-flex align-items-center gap-2 justify-content-end w-100">
+                                {% if not feedback.is_approved %}
+                                    {% url 'dash:approve_feedback' feedback.pk as approve_url %}
+                                    <button class="btn btn-sm btn-outline-success approve-btn"
+                                            data-approve-url="{{ approve_url }}"
+                                            data-csrf="{{ csrf_token }}">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                {% endif %}
+                                {% url 'dash:delete_feedback' feedback.pk as delete_url %}
+                                <button class="btn btn-sm btn-outline-danger delete-btn"
+                                        data-delete-url="{{ delete_url }}"
+                                        data-csrf="{{ csrf_token }}"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#deleteModal">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                                <a href="#"
+                                   class="btn btn-sm btn-outline-primary "
+                                   data-bs-toggle="modal"
+                                   data-bs-target="#feedbackDetailModal"
+                                   data-feedback-id="{{ feedback.pk }}"
+                                   data-feedback-name="{{ feedback.name }}"
+                                   data-feedback-email="{{ feedback.email }}"
+                                   data-feedback-description="{{ feedback.description }}"
+                                   data-feedback-picture="{% if feedback.picture %}{{ feedback.picture.url }}{% else %}https://placehold.co/400{% endif %}"
+                                   data-feedback-is-approved="{% if feedback.is_approved %}true{% else %}false{% endif %}"
+                                   data-feedback-created-at="{{ feedback.created_at|date:"N j, Y H:i:s" }}">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12">
+                    <div class="alert alert-info" role="alert">
+                        {% trans 'لا توجد تقييمات متاحة.' %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        {% include "components/pagination.html" with page_obj=page_obj %}
+
+    </div>
+    <!-- Delete Modal -->
+    <div class="modal fade"
+         id="deleteModal"
+         tabindex="-1"
+         aria-labelledby="deleteModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">
+                        {% trans 'هل أنت متأكد من حذف هذا العنصر؟' %}
+                    </h5>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body text-wrap">
+                    {% include "components/errorList.html" with form_id="deleteForm" %}
+
+                    {% trans 'هذا الإجراء لا يمكن التراجع عنه. سيتم حذف جميع البيانات المرتبطة بهذا العنصر بشكل دائم من النظام.' %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button"
+                            class="btn btn-outline-secondary"
+                            data-bs-dismiss="modal">
+                        {% trans 'إلغاء' %}
+                    </button>
+                    <form action="{{ delete_url }}" method="POST" id="deleteForm" class="form">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-danger">
+                            {% trans 'حذف' %}
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Feedback Detail Modal -->
+    <div class="modal fade"
+         id="feedbackDetailModal"
+         tabindex="-1"
+         aria-labelledby="feedbackDetailModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="feedbackDetailModalLabel">
+                        {% trans 'تفاصيل التقييم' %}
+                    </h5>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="card shadow-sm h-100 position-relative">
+                        <div class="card-body">
+                            <div class="row g-2">
+                                <div class="col-md-4 text-center">
+                                    <img src="https://placehold.co/400"
+                                         id="modalFeedbackPicture"
+                                         alt="Feedback Picture"
+                                         class="img-fluid rounded mb-3"
+                                         style="width: 100%;
+                                                object-fit: cover;
+                                                aspect-ratio:1 / 1" />
+                                    <h5 class="card-title" id="modalFeedbackName">
+                                    </h5>
+                                    <p class="card-text text-muted text-truncate" id="modalFeedbackEmail">
+                                    </p>
+                                </div>
+                                <div class="col-md-8">
+                                    <h5 class="fw-bold">
+                                        {% trans 'الوصف:' %}
+                                    </h5>
+                                    <p class="card-text" id="modalFeedbackDescription">
+                                    </p>
+                                    <h5 class="fw-bold">
+                                        {% trans 'الحالة:' %}
+                                    </h5>
+                                    <p class="card-text" id="modalFeedbackStatus">
+                                    </p>
+                                    <h5 class="fw-bold">
+                                        {% trans 'تاريخ الإنشاء:' %}
+                                    </h5>
+                                    <p class="card-text" id="modalFeedbackCreatedAt">
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        {% trans 'إغلاق' %}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock dashContent %}
+{% block extra_js %}
+    <script src="{% static 'js/feedbacks.js' %}?v={% now "U" %}"></script>
+{% endblock extra_js %}
